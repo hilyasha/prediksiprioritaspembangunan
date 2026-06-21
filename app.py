@@ -4,6 +4,11 @@ from pathlib import Path
 
 st.set_page_config(layout="wide", page_title="Analisis Prioritas Pembangunan", page_icon="📍")
 
+# ----------------------------------------------------------------------------
+# DESIGN TOKENS
+# Palet dipertahankan dari versi awal (cream + maroon + terracotta), diperluas
+# dengan warna status untuk 3 klaster dan tinta hangat untuk teks (bukan hitam pekat).
+# ----------------------------------------------------------------------------
 CREAM = "#FBF9D1"
 INK = "#3D2C2C"
 MAROON = "#9A3F3F"
@@ -21,7 +26,6 @@ st.markdown(f"""
     h1, h2, h3, .display-font {{ font-family: 'Lora', serif !important; letter-spacing: -0.01em; }}
 
     .stApp {{ background-color: {CREAM}; color: {INK}; }}
-
 
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, {MAROON} 0%, #7A2F2F 100%);
@@ -41,7 +45,6 @@ st.markdown(f"""
     }}
     .sidebar-name {{ font-size: 1.05rem; font-weight: 600; }}
     .sidebar-role {{ font-size: 0.8rem; opacity: 0.75; }}
-
 
     section[data-testid="stSidebar"] div[data-testid="stButton"] button {{
         width: 100%;
@@ -73,6 +76,7 @@ st.markdown(f"""
         font-weight: 600;
     }}
 
+
     .stNumberInput input, .stTextInput input, .stTextArea textarea {{
         background-color: #FFFFFF !important;
         border: 1px solid {CARD_BORDER} !important;
@@ -89,6 +93,7 @@ st.markdown(f"""
         border: 1px solid {CARD_BORDER} !important;
         border-radius: 8px !important;
     }}
+
 
     .hero-banner {{
         background: linear-gradient(135deg, {MAROON} 0%, {TERRACOTTA} 100%);
@@ -134,6 +139,7 @@ st.markdown(f"""
     .dim-card .dim-title {{ font-family: 'Lora', serif; font-weight: 600; font-size: 1rem; margin-bottom: 4px; }}
     .dim-card .dim-desc {{ font-size: 0.85rem; color: #6b5a5a; line-height: 1.5; }}
 
+
     .result-card {{
         background: #FFFFFF;
         border-radius: 14px;
@@ -162,6 +168,31 @@ st.markdown(f"""
         box-shadow: 0 2px 6px rgba(0,0,0,0.18);
     }}
     .gauge-labels {{ display: flex; justify-content: space-between; font-size: 0.72rem; color: #8a7a7a; }}
+
+
+    div[data-testid="stVerticalBlockBorderWrapper"]:has(div[data-testid="stVerticalBlock"]) {{
+        background-color: #FFFFFF;
+        border: 1px solid {CARD_BORDER} !important;
+        border-radius: 14px !important;
+        box-shadow: 0 4px 14px -6px rgba(154,63,63,0.10);
+    }}
+    div[data-testid="stVerticalBlockBorderWrapper"] {{ margin-bottom: 18px; }}
+
+    .form-title {{ font-family: 'Lora', serif; font-weight: 600; font-size: 1.15rem; color: {INK}; margin-bottom: 2px; }}
+    .form-subtitle {{ font-size: 0.85rem; color: #8a7270; margin-bottom: 18px; }}
+    .stTextInput label p {{ color: {MAROON} !important; font-size: 0.82rem !important; font-weight: 600 !important; }}
+
+    div[data-testid="stFormSubmitButton"] button {{
+        background-color: {MAROON} !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 12px 0 !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        margin-top: 6px;
+    }}
+    div[data-testid="stFormSubmitButton"] button:hover {{ background-color: #7A2F2F !important; }}
 
     #MainMenu {{visibility: hidden;}}
     footer {{visibility: hidden;}}
@@ -257,14 +288,13 @@ if menu == "Beranda":
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="card-white">', unsafe_allow_html=True)
-    st.markdown('<h3 class="display-font">Apa itu Indeks Pembangunan Manusia?</h3>', unsafe_allow_html=True)
-    st.write(
-        "Indeks Pembangunan Manusia (IPM) adalah ukuran standar statistik untuk menilai "
-        "keberhasilan pembangunan kualitas hidup manusia, disusun dari tiga dimensi dasar: "
-        "umur panjang dan hidup sehat, pengetahuan, serta standar hidup layak."
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
+    with st.container(border=True):
+        st.markdown('<h3 class="display-font">Apa itu Indeks Pembangunan Manusia?</h3>', unsafe_allow_html=True)
+        st.write(
+            "Indeks Pembangunan Manusia (IPM) adalah ukuran standar statistik untuk menilai "
+            "keberhasilan pembangunan kualitas hidup manusia, disusun dari tiga dimensi dasar: "
+            "umur panjang dan hidup sehat, pengetahuan, serta standar hidup layak."
+        )
 
     st.markdown("<div style='height: 6px;'></div>", unsafe_allow_html=True)
     col1, col2, col3, col4 = st.columns(4)
@@ -284,25 +314,38 @@ if menu == "Beranda":
                 </div>
             """, unsafe_allow_html=True)
 
-elif menu == "Prediksi":
-    st.markdown('<h2 class="display-font">Sistem Klasifikasi Wilayah</h2>', unsafe_allow_html=True)
-    st.caption("Masukkan nilai keempat indikator untuk menentukan klaster kesejahteraan suatu wilayah.")
 
-    with st.container():
-        st.markdown('<div class="card-white">', unsafe_allow_html=True)
+    st.markdown('<h2 class="display-font">Sistem Klasifikasi</h2>', unsafe_allow_html=True)
+
+    with st.container(border=True):
+        st.markdown("""
+            <div class="form-title">Parameter Indikator Wilayah</div>
+            <div class="form-subtitle">Masukkan nilai capaian indikator makro untuk menguji klaster prediksi</div>
+        """, unsafe_allow_html=True)
+
         with st.form("ipm_form"):
             col1, col2 = st.columns(2)
             with col1:
-                ahh = st.number_input("Angka Harapan Hidup (AHH) — tahun", min_value=50.0, max_value=90.0, step=0.1)
-                rls = st.number_input("Rata-rata Lama Sekolah (RLS) — tahun", min_value=1.0, max_value=20.0, step=0.1)
+                ahh_raw = st.text_input("Angka Harapan Hidup (AHH) - Tahun", placeholder="Contoh: 71.5")
+                hls_raw = st.text_input("Harapan Lama Sekolah (HLS) - Tahun", placeholder="Contoh: 13.0")
             with col2:
-                hls = st.number_input("Harapan Lama Sekolah (HLS) — tahun", min_value=5.0, max_value=20.0, step=0.1)
-                pengeluaran = st.number_input("Pengeluaran per Kapita per Tahun (ribu Rp)", min_value=1000, max_value=30000, step=100)
+                rls_raw = st.text_input("Rata-rata Lama Sekolah (RLS) - Tahun", placeholder="Contoh: 8.5")
+                peng_raw = st.text_input("Rata-rata Pengeluaran per Tahun (Ribu Rp/Tahun)", placeholder="Contoh: 11000")
 
-            submitted = st.form_submit_button("Jalankan Analisis Klasifikasi")
-        st.markdown('</div>', unsafe_allow_html=True)
+            submitted = st.form_submit_button("Jalankan Analisis Klasifikasi", use_container_width=True, type="primary")
 
     if submitted:
+        try:
+            ahh, rls, hls, pengeluaran = (
+                float(ahh_raw.replace(",", ".")),
+                float(rls_raw.replace(",", ".")),
+                float(hls_raw.replace(",", ".")),
+                float(peng_raw.replace(",", ".")),
+            )
+        except ValueError:
+            st.error("Semua kolom wajib diisi dengan angka yang valid, mengikuti contoh pada setiap field.")
+            st.stop()
+
         input_data = [[ahh, rls, hls, pengeluaran]]
         hasil = int(model.predict(input_data)[0])
         info = CLUSTER_INFO[hasil]
