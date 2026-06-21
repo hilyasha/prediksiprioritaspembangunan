@@ -1,5 +1,6 @@
 import streamlit as st
 import joblib
+from pathlib import Path
 
 st.set_page_config(layout="wide", page_title="Analisis Prioritas Pembangunan", page_icon="📍")
 
@@ -7,9 +8,9 @@ CREAM = "#FBF9D1"
 INK = "#3D2C2C"
 MAROON = "#9A3F3F"
 TERRACOTTA = "#C1856D"
-SAGE = "#6B8F71"
-OCHRE = "#D9A441"
-BRICK = "#B0413E"
+SAGE = "#6B8F71"      # klaster tinggi
+OCHRE = "#D9A441"      # klaster sedang
+BRICK = "#B0413E"      # klaster rendah
 CARD_BORDER = "rgba(154, 63, 63, 0.14)"
 
 st.markdown(f"""
@@ -20,6 +21,7 @@ st.markdown(f"""
     h1, h2, h3, .display-font {{ font-family: 'Lora', serif !important; letter-spacing: -0.01em; }}
 
     .stApp {{ background-color: {CREAM}; color: {INK}; }}
+
 
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, {MAROON} 0%, #7A2F2F 100%);
@@ -40,6 +42,53 @@ st.markdown(f"""
     .sidebar-name {{ font-size: 1.05rem; font-weight: 600; }}
     .sidebar-role {{ font-size: 0.8rem; opacity: 0.75; }}
 
+
+    section[data-testid="stSidebar"] div[data-testid="stButton"] button {{
+        width: 100%;
+        text-align: left;
+        justify-content: flex-start;
+        background: transparent;
+        border: 1px solid transparent;
+        color: #F6E9E2 !important;
+        font-weight: 500;
+        font-size: 0.95rem;
+        padding: 10px 14px;
+        border-radius: 10px;
+        margin-bottom: 4px;
+        box-shadow: none;
+        transition: background 0.15s ease;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stButton"] button:hover {{
+        background: rgba(255,255,255,0.10);
+        color: #fff !important;
+        border-color: transparent;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stButton"] button:focus:not(:active) {{
+        box-shadow: none;
+    }}
+    section[data-testid="stSidebar"] div[data-testid="stButton"] button[kind="primary"] {{
+        background: rgba(255,255,255,0.16);
+        color: #fff !important;
+        border-left: 3px solid {TERRACOTTA};
+        font-weight: 600;
+    }}
+
+    .stNumberInput input, .stTextInput input, .stTextArea textarea {{
+        background-color: #FFFFFF !important;
+        border: 1px solid {CARD_BORDER} !important;
+        border-radius: 8px !important;
+        color: {INK} !important;
+    }}
+    .stNumberInput button {{
+        background-color: #FFFFFF !important;
+        border: 1px solid {CARD_BORDER} !important;
+        color: {MAROON} !important;
+    }}
+    div[data-baseweb="select"] > div {{
+        background-color: #FFFFFF !important;
+        border: 1px solid {CARD_BORDER} !important;
+        border-radius: 8px !important;
+    }}
 
     .hero-banner {{
         background: linear-gradient(135deg, {MAROON} 0%, {TERRACOTTA} 100%);
@@ -120,9 +169,19 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 
+MODEL_PATH = Path(__file__).parent / "model_ipm_lr.pkl"
+
+
 @st.cache_resource
 def load_model():
-    return joblib.load("model_ipm_lr.pkl")
+    if not MODEL_PATH.exists():
+        st.error(
+            f"File model tidak ditemukan di `{MODEL_PATH.name}`. "
+            "Pastikan file model sudah di-commit ke repo (cek juga .gitignore "
+            "dan ukuran file jika lebih dari 100MB, perlu Git LFS)."
+        )
+        st.stop()
+    return joblib.load(MODEL_PATH)
 
 
 model = load_model()
@@ -170,7 +229,22 @@ st.sidebar.markdown("""
         <div class="sidebar-role">Analis Kebijakan Wilayah</div>
     </div>
 """, unsafe_allow_html=True)
-menu = st.sidebar.radio("Navigasi", ["Beranda", "Prediksi"], label_visibility="collapsed")
+menu_options = [("Beranda", "🏠"), ("Prediksi", "📊")]
+if "page" not in st.session_state:
+    st.session_state.page = "Beranda"
+
+for label, icon in menu_options:
+    is_active = st.session_state.page == label
+    if st.sidebar.button(
+        f"{icon}   {label}",
+        key=f"nav_{label}",
+        type="primary" if is_active else "secondary",
+        use_container_width=True,
+    ):
+        st.session_state.page = label
+        st.rerun()
+
+menu = st.session_state.page
 
 
 if menu == "Beranda":
@@ -209,7 +283,6 @@ if menu == "Beranda":
                     <div class="dim-desc">{desc}</div>
                 </div>
             """, unsafe_allow_html=True)
-
 
 elif menu == "Prediksi":
     st.markdown('<h2 class="display-font">Sistem Klasifikasi Wilayah</h2>', unsafe_allow_html=True)
