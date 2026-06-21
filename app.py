@@ -4,7 +4,6 @@ from pathlib import Path
 
 st.set_page_config(layout="wide", page_title="Analisis Prioritas Pembangunan", page_icon="📍")
 
-
 CREAM = "#FBF9D1"
 INK = "#3D2C2C"
 MAROON = "#9A3F3F"
@@ -22,7 +21,6 @@ st.markdown(f"""
     h1, h2, h3, .display-font {{ font-family: 'Lora', serif !important; letter-spacing: -0.01em; }}
 
     .stApp {{ background-color: {CREAM}; color: {INK}; }}
-
 
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, {MAROON} 0%, #7A2F2F 100%);
@@ -42,6 +40,7 @@ st.markdown(f"""
     }}
     .sidebar-name {{ font-size: 1.05rem; font-weight: 600; }}
     .sidebar-role {{ font-size: 0.8rem; opacity: 0.75; }}
+
 
     section[data-testid="stSidebar"] div[data-testid="stButton"] button {{
         width: 100%;
@@ -90,7 +89,6 @@ st.markdown(f"""
         border-radius: 8px !important;
     }}
 
-
     .hero-banner {{
         background: linear-gradient(135deg, {MAROON} 0%, {TERRACOTTA} 100%);
         padding: 42px 40px;
@@ -113,7 +111,6 @@ st.markdown(f"""
     .hero-banner h1 {{ margin: 0 0 8px 0; font-size: 2.1rem; color: #fff; }}
     .hero-banner p {{ margin: 0; opacity: 0.9; font-size: 1rem; max-width: 560px; }}
 
-
     .card-white {{
         background-color: #FFFFFF;
         padding: 26px 28px;
@@ -135,7 +132,6 @@ st.markdown(f"""
     }}
     .dim-card .dim-title {{ font-family: 'Lora', serif; font-weight: 600; font-size: 1rem; margin-bottom: 4px; }}
     .dim-card .dim-desc {{ font-size: 0.85rem; color: #6b5a5a; line-height: 1.5; }}
-
 
     .result-card {{
         background: #FFFFFF;
@@ -180,6 +176,18 @@ st.markdown(f"""
     .form-title {{ font-family: 'Lora', serif; font-weight: 600; font-size: 1.15rem; color: {INK}; margin-bottom: 2px; }}
     .form-subtitle {{ font-size: 0.85rem; color: #8a7270; margin-bottom: 18px; }}
     .stTextInput label p {{ color: {MAROON} !important; font-size: 0.82rem !important; font-weight: 600 !important; }}
+
+
+    .page-header-bar {{
+        background-color: #FFFFFF;
+        margin: -4rem -5rem 2rem -5rem;
+        padding: 26px 48px;
+        border-bottom: 1px solid {CARD_BORDER};
+    }}
+    .page-header-bar h2 {{ margin: 0; color: {MAROON}; font-size: 1.45rem; }}
+    @media (max-width: 768px) {{
+        .page-header-bar {{ margin: -4rem -1.5rem 1.5rem -1.5rem; padding: 22px 24px; }}
+    }}
 
     div[data-testid="stFormSubmitButton"] button {{
         background-color: {MAROON} !important;
@@ -315,7 +323,7 @@ if menu == "Beranda":
 
 
 elif menu == "Prediksi":
-    st.markdown('<h2 class="display-font">Sistem Klasifikasi</h2>', unsafe_allow_html=True)
+    st.markdown('<div class="page-header-bar"><h2>Sistem Klasifikasi</h2></div>', unsafe_allow_html=True)
 
     with st.container(border=True):
         st.markdown("""
