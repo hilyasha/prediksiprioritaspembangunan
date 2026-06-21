@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Klasifikasi IPM</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-brand">Halo, Elena！</div>
+        <ul class="sidebar-menu">
+            <li><a href="/">🏠︎ Beranda</a></li>
+            <li class="active"><a href="/prediksi">🔍︎ Prediksi</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="top-header">
+            <div class="header-title"><h2>Sistem Klasifikasi</h2></div>
+        </div>
+
+        <div class="page-body">
+            <div class="card-white">
+                <h3 style="margin-bottom: 5px;">Parameter Indikator Wilayah</h3>
+                <p style="color:#64748b; font-size:0.88rem; margin-bottom:25px;">Masukkan nilai capaian indikator makro untuk menguji klaster prediksi</p>
+                
+                <form id="ipmForm" class="form-grid">
+                    <div class="form-group">
+                        <label>Angka Harapan Hidup (AHH) - Tahun</label>
+                        <input type="number" id="ahh" step="0.1" min="50" max="90" placeholder="Contoh: 71.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rata-rata Lama Sekolah (RLS) - Tahun</label>
+                        <input type="number" id="rls" step="0.1" min="1" max="20" placeholder="Contoh: 8.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Harapan Lama Sekolah (HLS) - Tahun</label>
+                        <input type="number" id="hls" step="0.1" min="5" max="20" placeholder="Contoh: 13.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Rata Rata Pengeluaran per Tahun (Ribu Rp/Tahun)</label>
+                        <input type="number" id="pengeluaran" min="1000" max="30000" placeholder="Contoh: 11000" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Jalankan Analisis Klasifikasi</button>
+                </form>
+            </div>
+
+            <div id="resultBox" class="result-card">
+                <h3 id="resultTitle" style="margin-top:0; margin-bottom:8px;"></h3>
+                <p id="resultDesc" style="margin:0; font-size:0.95rem; line-height:1.5;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('ipmForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                ahh: parseFloat(document.getElementById('ahh').value),
+                hls: parseFloat(document.getElementById('hls').value),
+                rls: parseFloat(document.getElementById('rls').value),
+                pengeluaran: parseFloat(document.getElementById('pengeluaran').value)
+            };
+
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            const resultBox = document.getElementById('resultBox');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDesc = document.getElementById('resultDesc');
+
+            resultBox.className = 'result-card';
+            
+            if(result.cluster === 0) {
+                resultBox.classList.add('cluster-0');
+                resultTitle.innerText = "🟥 Terdeteksi: CLUSTER 0 (Kesejahteraan Rendah)";
+                resultDesc.innerHTML = "<b>Rekomendasi:</b> Perlu intervensi khusus untuk akselerasi infrastruktur kesehatan dasar.";
+            } else if(result.cluster === 1) {
+                resultBox.classList.add('cluster-1');
+                resultTitle.innerText = "🟨 Terdeteksi: CLUSTER 1 (Kesejahteraan Sedang)";
+                resultDesc.innerHTML = "<b>Rekomendasi:</b> Fokus diarahkan pada perluasan mutu pendidikan tingkat menengah ke atas.";
+            } else {
+                resultBox.classList.add('cluster-2');
+                resultTitle.innerText = "🟩 Terdeteksi: CLUSTER 2 (Kesejahteraan Tinggi)";
+                resultDesc.innerHTML = "<b>Status:</b> Capaian komponen makro daerah sangat prima dan berada di atas ambang batas rata-rata.";
+            }
+
+            resultBox.style.display = 'block';
+            resultBox.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
