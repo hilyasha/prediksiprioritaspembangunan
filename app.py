@@ -122,7 +122,7 @@ st.markdown(f"""
 
 @st.cache_resource
 def load_model():
-    return joblib.load("model_ipm.pkl")
+    return joblib.load("model_ipm_lr.pkl")
 
 
 model = load_model()
