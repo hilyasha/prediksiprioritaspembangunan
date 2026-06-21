@@ -4,11 +4,7 @@ from pathlib import Path
 
 st.set_page_config(layout="wide", page_title="Analisis Prioritas Pembangunan", page_icon="📍")
 
-# ----------------------------------------------------------------------------
-# DESIGN TOKENS
-# Palet dipertahankan dari versi awal (cream + maroon + terracotta), diperluas
-# dengan warna status untuk 3 klaster dan tinta hangat untuk teks (bukan hitam pekat).
-# ----------------------------------------------------------------------------
+
 CREAM = "#FBF9D1"
 INK = "#3D2C2C"
 MAROON = "#9A3F3F"
@@ -26,6 +22,7 @@ st.markdown(f"""
     h1, h2, h3, .display-font {{ font-family: 'Lora', serif !important; letter-spacing: -0.01em; }}
 
     .stApp {{ background-color: {CREAM}; color: {INK}; }}
+
 
     section[data-testid="stSidebar"] {{
         background: linear-gradient(180deg, {MAROON} 0%, #7A2F2F 100%);
@@ -76,7 +73,6 @@ st.markdown(f"""
         font-weight: 600;
     }}
 
-
     .stNumberInput input, .stTextInput input, .stTextArea textarea {{
         background-color: #FFFFFF !important;
         border: 1px solid {CARD_BORDER} !important;
@@ -116,6 +112,7 @@ st.markdown(f"""
     }}
     .hero-banner h1 {{ margin: 0 0 8px 0; font-size: 2.1rem; color: #fff; }}
     .hero-banner p {{ margin: 0; opacity: 0.9; font-size: 1rem; max-width: 560px; }}
+
 
     .card-white {{
         background-color: #FFFFFF;
@@ -169,14 +166,16 @@ st.markdown(f"""
     }}
     .gauge-labels {{ display: flex; justify-content: space-between; font-size: 0.72rem; color: #8a7a7a; }}
 
-
-    div[data-testid="stVerticalBlockBorderWrapper"]:has(div[data-testid="stVerticalBlock"]) {{
-        background-color: #FFFFFF;
+    div[data-testid="stVerticalBlockBorderWrapper"] {{
+        background-color: #FFFFFF !important;
         border: 1px solid {CARD_BORDER} !important;
         border-radius: 14px !important;
         box-shadow: 0 4px 14px -6px rgba(154,63,63,0.10);
+        margin-bottom: 18px;
     }}
-    div[data-testid="stVerticalBlockBorderWrapper"] {{ margin-bottom: 18px; }}
+    div[data-testid="stVerticalBlockBorderWrapper"] > div {{
+        background-color: #FFFFFF !important;
+    }}
 
     .form-title {{ font-family: 'Lora', serif; font-weight: 600; font-size: 1.15rem; color: {INK}; margin-bottom: 2px; }}
     .form-subtitle {{ font-size: 0.85rem; color: #8a7270; margin-bottom: 18px; }}
@@ -315,6 +314,7 @@ if menu == "Beranda":
             """, unsafe_allow_html=True)
 
 
+elif menu == "Prediksi":
     st.markdown('<h2 class="display-font">Sistem Klasifikasi</h2>', unsafe_allow_html=True)
 
     with st.container(border=True):
