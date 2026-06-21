@@ -1,28 +1,17 @@
-from flask import Flask, render_template, request, jsonify
-import numpy as np
+import streamlit as st
 import joblib
+import pandas as pd
 
-app = Flask(__name__)
+model = joblib.load('model_ipm_lr.pkl') 
 
-# Memuat berkas biner pkl
-model_lr = joblib.load('model_ipm_lr.pkl')
-scaler_ipm = joblib.load('scaler_ipm.pkl')
+st.title("Aplikasi Prediksi IPM")
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+pengeluaran = st.number_input("Masukkan Pengeluaran", min_value=0)
+rls = st.number_input("Masukkan RLS", min_value=0.0)
+hls = st.number_input("Masukkan HLS", min_value=0.0)
+ahh = st.number_input("Masukkan AHH", min_value=0.0)
 
-@app.route('/prediksi')
-def prediksi_page():
-    return render_template('prediksi.html')
-
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.get_json()
-    features_raw = np.array([[data['ahh'], data['hls'], data['rls'], data['pengeluaran']]])
-    features_scaled = scaler_ipm.transform(features_raw)
-    predicted_cluster = model_lr.predict(features_scaled)[0]
-    return jsonify({'cluster': int(predicted_cluster)})
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8000)
+if st.button("Prediksi"):
+    data_input = [[pengeluaran, rls, hls, ahh]]
+    hasil = model.predict(data_input)
+    st.write(f"Hasil Prediksi Klaster: {hasil[0]}")
