@@ -221,6 +221,10 @@ def load_model():
         st.stop()
     return joblib.load(MODEL_PATH)
 
+def load_scaler():
+    return joblib.load("scaler_ipm.pkl") 
+
+scaler = load_scaler()
 
 model = load_model()
 
@@ -355,7 +359,8 @@ elif menu == "Prediksi":
             st.stop()
 
         input_data = [[ahh, rls, hls, pengeluaran]]
-        hasil = int(model.predict(input_data)[0])
+        input_data_scaled = scaler.transform([[ahh, rls, hls, pengeluaran]])
+        hasil = int(model.predict(input_data_scaled)[0])
         info = CLUSTER_INFO[hasil]
 
         st.markdown(f"""
